@@ -85,6 +85,19 @@
         .faq-item.active .faq-answer {
             display: block;
         }
+        #facts-list {
+            margin-top: 18px;
+        }
+        .fact-item {
+            margin-bottom: 10px;
+            font-style: italic;
+            color: #7c5c00;
+            opacity: 0;
+            transition: opacity 0.6s;
+        }
+        .fact-item.visible {
+            opacity: 1;
+        }
     </style>
     <style>
         @media (max-width: 600px) {
@@ -256,7 +269,7 @@
         </div>
         <button id="fact-btn" onclick="showFact()">🍌 Показать интересный факт о бананах</button>
         <div id="counter" style="margin-top:8px; color:#bfa100; text-align:center; font-size:0.98rem;"></div>
-        <div id="fact"></div>
+        <div id="facts-list"></div>
     </div>
     <script>
         const facts = [
@@ -289,14 +302,14 @@
         let firstClick = true;
         let factCount = 0;
         function showFact() {
-            const factDiv = document.getElementById('fact');
+            const factsList = document.getElementById('facts-list');
             const btn = document.getElementById('fact-btn');
             const counter = document.getElementById('counter');
             const fact = facts[Math.floor(Math.random() * facts.length)];
-            factDiv.classList.remove('visible');
-            void factDiv.offsetWidth;
-            factDiv.textContent = fact;
-            factDiv.classList.add('visible');
+            const newFactDiv = document.createElement('div');
+            newFactDiv.className = 'fact-item visible';
+            newFactDiv.textContent = fact;
+            factsList.appendChild(newFactDiv);
             if (firstClick) {
                 btn.textContent = 'Показать ещё';
                 firstClick = false;
@@ -304,18 +317,14 @@
             factCount++;
             counter.textContent = `Показано фактов: ${factCount}`;
             setTimeout(() => {
-                factDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                newFactDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }, 100);
         }
         function toggleFaq(idx) {
             const items = document.querySelectorAll('.faq-item');
-            items.forEach((item, i) => {
-                if (i === idx) {
-                    item.classList.toggle('active');
-                } else {
-                    item.classList.remove('active');
-                }
-            });
+            if (items[idx]) {
+                items[idx].classList.toggle('active');
+            }
         }
         function toggleTheme() {
             const body = document.body;
