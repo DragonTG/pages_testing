@@ -39,10 +39,20 @@
             font-size: 1rem;
             cursor: pointer;
             margin-top: 20px;
-            transition: background 0.2s;
+            transition: background 0.2s, transform 0.12s;
         }
         button:hover {
             background: #ffd43b;
+            animation: btn-shake 0.18s linear 1;
+        }
+        button:active {
+            transform: scale(0.97) rotate(-2deg);
+        }
+        @keyframes btn-shake {
+            0% { transform: translateX(0); }
+            30% { transform: translateX(-2px); }
+            60% { transform: translateX(2px); }
+            100% { transform: translateX(0); }
         }
         #fact {
             margin-top: 18px;
@@ -74,16 +84,21 @@
             background: #ffe066;
         }
         .faq-answer {
-            display: none;
-            padding: 8px 14px 12px 14px;
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            padding: 0 14px;
             background: #fffbe7;
             border-radius: 0 0 6px 6px;
             color: #3d2c00;
             font-size: 0.98rem;
             margin-bottom: 8px;
+            transition: max-height 0.4s cubic-bezier(.4,0,.2,1), opacity 0.4s, padding 0.4s;
         }
         .faq-item.active .faq-answer {
-            display: block;
+            max-height: 200px;
+            opacity: 1;
+            padding: 8px 14px 12px 14px;
         }
         #facts-list {
             margin-top: 18px;
@@ -94,9 +109,31 @@
             color: #7c5c00;
             opacity: 0;
             transition: opacity 0.6s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         .fact-item.visible {
             opacity: 1;
+        }
+        .like-btn, .share-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1em;
+            margin-left: 4px;
+            transition: transform 0.15s;
+        }
+        .like-btn.liked {
+            color: #e25555;
+            transform: scale(1.2);
+        }
+        .like-btn:active, .share-btn:active {
+            transform: scale(1.15);
+        }
+        .like-count {
+            font-size: 0.95em;
+            margin-left: 2px;
         }
     </style>
     <style>
@@ -213,64 +250,87 @@
             fill: #ffe066;
         }
     </style>
+    <style>
+        @media (min-width: 900px) {
+            .main-flex {
+                display: flex;
+                gap: 32px;
+                align-items: flex-start;
+            }
+            .main-flex > .left, .main-flex > .right {
+                flex: 1 1 0;
+                min-width: 0;
+            }
+            #facts-list, .faq-section {
+                margin-top: 0;
+            }
+        }
+    </style>
 </head>
 <body>
     <button class="theme-toggle" onclick="toggleTheme()">🌙 Тёмная тема</button>
     <div class="container">
-        <svg class="banana-img" viewBox="0 0 120 120" width="120" height="120" xmlns="http://www.w3.org/2000/svg" aria-label="Банан" style="display:block;margin:0 auto 24px auto;">
-            <g>
-                <path d="M30,100 Q50,115 90,90 Q110,75 100,55 Q95,45 85,50 Q80,52 78,60 Q75,70 65,65 Q55,60 50,70 Q45,80 55,90 Q65,100 80,95" fill="#ffe066" stroke="#e2b007" stroke-width="3"/>
-                <path d="M32,102 Q40,110 55,100" fill="none" stroke="#bfa100" stroke-width="3"/>
-                <ellipse cx="95" cy="88" rx="5" ry="3" fill="#e2b007"/>
-                <ellipse cx="40" cy="105" rx="4" ry="2" fill="#bfa100"/>
-                <ellipse cx="80" cy="97" rx="3" ry="1.5" fill="#ffd43b"/>
-                <ellipse cx="100" cy="60" rx="2.5" ry="1.2" fill="#e2b007"/>
-                <ellipse cx="60" cy="80" rx="2" ry="1" fill="#ffd43b"/>
-            </g>
-        </svg>
-        <h1>🍌 Польза бананов</h1>
-        <p>Бананы — это не только вкусный, но и очень полезный фрукт. Они богаты калием 🥇, витаминами B6 и C 💊, а также клетчаткой 🌱.</p>
-        <ul>
-            <li>💛 Укрепляют сердце и сосуды благодаря высокому содержанию калия.</li>
-            <li>😊 Помогают поддерживать хорошее настроение и энергию.</li>
-            <li>🍃 Способствуют пищеварению и улучшают работу кишечника.</li>
-            <li>🏃‍♂️ Являются отличным перекусом для спортсменов и активных людей.</li>
-        </ul>
-        <div style="margin: 28px 0 18px 0; text-align:center;">
-            <strong style="color:#e2b007;">🥗 Питательные вещества в 1 банане (120 г):</strong>
-            <br>
-            <svg width="320" height="120" viewBox="0 0 320 120">
-                <rect x="30" y="40" width="30" height="60" fill="#ffe066"/>
-                <rect x="80" y="70" width="30" height="30" fill="#ffd43b"/>
-                <rect x="130" y="60" width="30" height="40" fill="#fab005"/>
-                <rect x="180" y="90" width="30" height="10" fill="#e2b007"/>
-                <rect x="230" y="80" width="30" height="20" fill="#bfa100"/>
-                <text x="45" y="115" font-size="13" text-anchor="middle" fill="#7c5c00">Калий</text>
-                <text x="95" y="115" font-size="13" text-anchor="middle" fill="#7c5c00">В6</text>
-                <text x="145" y="115" font-size="13" text-anchor="middle" fill="#7c5c00">Вит. C</text>
-                <text x="195" y="115" font-size="13" text-anchor="middle" fill="#7c5c00">Клетч.</text>
-                <text x="245" y="115" font-size="13" text-anchor="middle" fill="#7c5c00">Магний</text>
-            </svg>
+        <div class="main-flex">
+            <div class="left">
+                <svg class="banana-img" viewBox="0 0 120 120" width="120" height="120" xmlns="http://www.w3.org/2000/svg" aria-label="Банан" style="display:block;margin:0 auto 24px auto;">
+                    <g>
+                        <path d="M30,100 Q50,115 90,90 Q110,75 100,55 Q95,45 85,50 Q80,52 78,60 Q75,70 65,65 Q55,60 50,70 Q45,80 55,90 Q65,100 80,95" fill="#ffe066" stroke="#e2b007" stroke-width="3"/>
+                        <path d="M32,102 Q40,110 55,100" fill="none" stroke="#bfa100" stroke-width="3"/>
+                        <ellipse cx="95" cy="88" rx="5" ry="3" fill="#e2b007"/>
+                        <ellipse cx="40" cy="105" rx="4" ry="2" fill="#bfa100"/>
+                        <ellipse cx="80" cy="97" rx="3" ry="1.5" fill="#ffd43b"/>
+                        <ellipse cx="100" cy="60" rx="2.5" ry="1.2" fill="#e2b007"/>
+                        <ellipse cx="60" cy="80" rx="2" ry="1" fill="#ffd43b"/>
+                    </g>
+                </svg>
+                <h1>🍌 Польза бананов</h1>
+                <p>Бананы — это не только вкусный, но и очень полезный фрукт. Они богаты калием 🥇, витаминами B6 и C 💊, а также клетчаткой 🌱.</p>
+                <ul>
+                    <li><span title="Калий">💛</span> Укрепляют сердце и сосуды благодаря высокому содержанию калия.</li>
+                    <li><span title="Настроение">😊</span> Помогают поддерживать хорошее настроение и энергию.</li>
+                    <li><span title="Пищеварение">🍃</span> Способствуют пищеварению и улучшают работу кишечника.</li>
+                    <li><span title="Спорт">🏃‍♂️</span> Являются отличным перекусом для спортсменов и активных людей.</li>
+                </ul>
+                <div style="margin: 28px 0 18px 0; text-align:center;">
+                    <strong style="color:#e2b007;">🥗 Питательные вещества в 1 банане (120 г):</strong>
+                    <br>
+                    <svg width="320" height="120" viewBox="0 0 320 120">
+                        <rect x="30" y="40" width="30" height="60" fill="#ffe066"/>
+                        <rect x="80" y="70" width="30" height="30" fill="#ffd43b"/>
+                        <rect x="130" y="60" width="30" height="40" fill="#fab005"/>
+                        <rect x="180" y="90" width="30" height="10" fill="#e2b007"/>
+                        <rect x="230" y="80" width="30" height="20" fill="#bfa100"/>
+                        <text x="45" y="115" font-size="13" text-anchor="middle" fill="#7c5c00" title="Калий">Калий</text>
+                        <text x="95" y="115" font-size="13" text-anchor="middle" fill="#7c5c00" title="Витамин B6">В6</text>
+                        <text x="145" y="115" font-size="13" text-anchor="middle" fill="#7c5c00" title="Витамин C">Вит. C</text>
+                        <text x="195" y="115" font-size="13" text-anchor="middle" fill="#7c5c00" title="Клетчатка">Клетч.</text>
+                        <text x="245" y="115" font-size="13" text-anchor="middle" fill="#7c5c00" title="Магний">Магний</text>
+                    </svg>
+                </div>
+                <div class="faq-section">
+                    <button id="random-faq-btn" style="margin:0 auto 12px auto;display:block;background:#ffe066;color:#3d2c00;border:none;border-radius:6px;padding:8px 18px;font-size:1rem;cursor:pointer;transition:background 0.2s;" onclick="showRandomFaq()">🎲 Показать случайный миф</button>
+                    <h2 style="color:#e2b007; font-size:1.15rem; margin-bottom:10px; text-align:center;">🧐 Мифы о бананах</h2>
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(0)">Бананы сильно калорийны и способствуют набору веса</button>
+                        <div class="faq-answer">В 1 банане всего около 100-120 ккал. При умеренном употреблении бананы не способствуют набору веса, а наоборот, могут быть частью здорового питания.</div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(1)">Бананы нельзя есть при диабете</button>
+                        <div class="faq-answer">Бананы можно есть при диабете в умеренных количествах, учитывая общий рацион. Они содержат клетчатку и витамины.</div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(2)">Бананы — это фрукт</button>
+                        <div class="faq-answer">С ботанической точки зрения банан — это ягода!</div>
+                    </div>
+                </div>
+                <button id="fact-btn" onclick="showFact()">🍌 Показать интересный факт о бананах</button>
+                <div id="counter" style="margin-top:8px; color:#bfa100; text-align:center; font-size:0.98rem;"></div>
+                <div id="facts-list"></div>
+                <button id="clear-facts-btn" style="display:none;margin:10px auto 0 auto;display:block;background:#ffd43b;color:#3d2c00;" onclick="clearFacts()">🗑️ Скрыть все факты</button>
+            </div>
         </div>
-        <div class="faq-section">
-            <h2 style="color:#e2b007; font-size:1.15rem; margin-bottom:10px; text-align:center;">🧐 Мифы о бананах</h2>
-            <div class="faq-item">
-                <button class="faq-question" onclick="toggleFaq(0)">Бананы сильно калорийны и способствуют набору веса</button>
-                <div class="faq-answer">В 1 банане всего около 100-120 ккал. При умеренном употреблении бананы не способствуют набору веса, а наоборот, могут быть частью здорового питания.</div>
-            </div>
-            <div class="faq-item">
-                <button class="faq-question" onclick="toggleFaq(1)">Бананы нельзя есть при диабете</button>
-                <div class="faq-answer">Бананы можно есть при диабете в умеренных количествах, учитывая общий рацион. Они содержат клетчатку и витамины.</div>
-            </div>
-            <div class="faq-item">
-                <button class="faq-question" onclick="toggleFaq(2)">Бананы — это фрукт</button>
-                <div class="faq-answer">С ботанической точки зрения банан — это ягода!</div>
-            </div>
-        </div>
-        <button id="fact-btn" onclick="showFact()">🍌 Показать интересный факт о бананах</button>
-        <div id="counter" style="margin-top:8px; color:#bfa100; text-align:center; font-size:0.98rem;"></div>
-        <div id="facts-list"></div>
     </div>
+    <button id="to-top-btn" style="display:none;position:fixed;right:18px;bottom:28px;z-index:200;background:#ffe066;color:#3d2c00;border:none;border-radius:50%;width:48px;height:48px;font-size:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.13);cursor:pointer;transition:background 0.2s;">⬆️</button>
     <script>
         const facts = [
             "🍌 Бананы — одна из самых популярных культур в мире!",
@@ -301,15 +361,41 @@
         ];
         let firstClick = true;
         let factCount = 0;
+        let unusedFacts = [...facts];
         function showFact() {
             const factsList = document.getElementById('facts-list');
             const btn = document.getElementById('fact-btn');
             const counter = document.getElementById('counter');
-            const fact = facts[Math.floor(Math.random() * facts.length)];
+            if (unusedFacts.length === 0) unusedFacts = [...facts];
+            const idx = Math.floor(Math.random() * unusedFacts.length);
+            const fact = unusedFacts.splice(idx, 1)[0];
             const newFactDiv = document.createElement('div');
             newFactDiv.className = 'fact-item visible';
-            newFactDiv.textContent = fact;
+            const factText = document.createElement('span');
+            factText.textContent = fact;
+            newFactDiv.appendChild(factText);
+            const likeBtn = document.createElement('button');
+            likeBtn.className = 'like-btn';
+            likeBtn.innerHTML = '❤️ <span class="like-count">0</span>';
+            likeBtn.onclick = function() {
+                const countSpan = likeBtn.querySelector('.like-count');
+                countSpan.textContent = parseInt(countSpan.textContent) + 1;
+                likeBtn.classList.add('liked');
+            };
+            newFactDiv.appendChild(likeBtn);
+            const shareBtn = document.createElement('button');
+            shareBtn.className = 'share-btn';
+            shareBtn.innerHTML = '🔗';
+            shareBtn.title = 'Скопировать факт';
+            shareBtn.onclick = function() {
+                navigator.clipboard.writeText(fact).then(() => {
+                    shareBtn.textContent = '✅';
+                    setTimeout(() => { shareBtn.textContent = '🔗'; }, 1200);
+                });
+            };
+            newFactDiv.appendChild(shareBtn);
             factsList.appendChild(newFactDiv);
+            document.getElementById('clear-facts-btn').style.display = 'block';
             if (firstClick) {
                 btn.textContent = 'Показать ещё';
                 firstClick = false;
@@ -336,6 +422,44 @@
                 btn.textContent = '🌙 Тёмная тема';
             }
         }
+        function clearFacts() {
+            const factsList = document.getElementById('facts-list');
+            factsList.querySelectorAll('.fact-item').forEach(fact => {
+                fact.classList.remove('visible');
+                setTimeout(() => fact.remove(), 600);
+            });
+            document.getElementById('clear-facts-btn').style.display = 'none';
+        }
+        function showRandomFaq() {
+            const items = document.querySelectorAll('.faq-item');
+            const idx = Math.floor(Math.random() * items.length);
+            if (items[idx]) {
+                items[idx].classList.add('active');
+                setTimeout(() => {
+                    items[idx].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 100);
+            }
+        }
+        // Включение тёмной темы по системным настройкам
+        (function() {
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.body.classList.add('dark');
+                const btn = document.querySelector('.theme-toggle');
+                if (btn) btn.textContent = '☀️ Светлая тема';
+            }
+        })();
+        // Кнопка "Наверх"
+        const toTopBtn = document.getElementById('to-top-btn');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                toTopBtn.style.display = 'block';
+            } else {
+                toTopBtn.style.display = 'none';
+            }
+        });
+        toTopBtn.onclick = () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
     </script>
 </body>
 </html>
