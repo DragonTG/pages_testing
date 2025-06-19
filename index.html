@@ -47,10 +47,134 @@
             margin-top: 18px;
             font-style: italic;
             color: #7c5c00;
+            opacity: 0;
+            transition: opacity 0.6s;
+        }
+        #fact.visible {
+            opacity: 1;
+        }
+        .faq-section {
+            margin: 24px 0 10px 0;
+        }
+        .faq-question {
+            width: 100%;
+            text-align: left;
+            background: #fffbe7;
+            border: 1px solid #ffe066;
+            border-radius: 6px;
+            padding: 10px 14px;
+            font-size: 1rem;
+            color: #7c5c00;
+            cursor: pointer;
+            margin-bottom: 4px;
+            transition: background 0.2s;
+        }
+        .faq-question:hover {
+            background: #ffe066;
+        }
+        .faq-answer {
+            display: none;
+            padding: 8px 14px 12px 14px;
+            background: #fffbe7;
+            border-radius: 0 0 6px 6px;
+            color: #3d2c00;
+            font-size: 0.98rem;
+            margin-bottom: 8px;
+        }
+        .faq-item.active .faq-answer {
+            display: block;
+        }
+    </style>
+    <style>
+        @media (max-width: 600px) {
+            .container {
+                max-width: 98vw;
+                padding: 16px 4vw;
+            }
+            h1 {
+                font-size: 1.4rem;
+            }
+            .banana-img {
+                width: 80px;
+            }
+            button {
+                font-size: 0.95rem;
+                padding: 8px 10px;
+            }
+            #counter {
+                font-size: 0.92rem !important;
+            }
+            svg {
+                width: 98vw !important;
+                height: 80px !important;
+            }
+        }
+    </style>
+    <style>
+        .theme-toggle {
+            position: fixed;
+            top: 18px;
+            right: 18px;
+            z-index: 100;
+            background: #ffe066;
+            color: #3d2c00;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 16px;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+            transition: background 0.2s;
+        }
+        .theme-toggle:hover {
+            background: #ffd43b;
+        }
+        body.dark {
+            background: #23211a;
+            color: #ffe066;
+        }
+        body.dark .container {
+            background: #2d2b23;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+        }
+        body.dark h1, body.dark h2, body.dark strong {
+            color: #ffe066 !important;
+        }
+        body.dark .banana-img {
+            filter: brightness(0.85);
+        }
+        body.dark button, body.dark .theme-toggle {
+            background: #3d2c00;
+            color: #ffe066;
+        }
+        body.dark button:hover, body.dark .theme-toggle:hover {
+            background: #7c5c00;
+        }
+        body.dark #fact {
+            color: #ffe066;
+        }
+        body.dark .faq-question {
+            background: #2d2b23;
+            border-color: #3d2c00;
+            color: #ffe066;
+        }
+        body.dark .faq-question:hover {
+            background: #3d2c00;
+        }
+        body.dark .faq-answer {
+            background: #23211a;
+            color: #ffe066;
+        }
+        body.dark #counter {
+            color: #ffe066 !important;
+        }
+        body.dark svg text {
+            fill: #ffe066;
         }
     </style>
 </head>
 <body>
+    <button class="theme-toggle" onclick="toggleTheme()">🌙 Тёмная тема</button>
     <div class="container">
         <img src="https://cdn.pixabay.com/photo/2018/04/29/21/27/banana-3367756_1280.png" alt="Банан" class="banana-img">
         <h1>Польза бананов</h1>
@@ -61,7 +185,39 @@
             <li>Способствуют пищеварению и улучшают работу кишечника.</li>
             <li>Являются отличным перекусом для спортсменов и активных людей.</li>
         </ul>
-        <button onclick="showFact()">Показать интересный факт о бананах</button>
+        <div style="margin: 28px 0 18px 0; text-align:center;">
+            <strong style="color:#e2b007;">Питательные вещества в 1 банане (120 г):</strong>
+            <br>
+            <svg width="320" height="120" viewBox="0 0 320 120">
+                <rect x="30" y="40" width="30" height="60" fill="#ffe066"/>
+                <rect x="80" y="70" width="30" height="30" fill="#ffd43b"/>
+                <rect x="130" y="60" width="30" height="40" fill="#fab005"/>
+                <rect x="180" y="90" width="30" height="10" fill="#e2b007"/>
+                <rect x="230" y="80" width="30" height="20" fill="#bfa100"/>
+                <text x="45" y="115" font-size="13" text-anchor="middle" fill="#7c5c00">Калий</text>
+                <text x="95" y="115" font-size="13" text-anchor="middle" fill="#7c5c00">В6</text>
+                <text x="145" y="115" font-size="13" text-anchor="middle" fill="#7c5c00">Вит. C</text>
+                <text x="195" y="115" font-size="13" text-anchor="middle" fill="#7c5c00">Клетч.</text>
+                <text x="245" y="115" font-size="13" text-anchor="middle" fill="#7c5c00">Магний</text>
+            </svg>
+        </div>
+        <div class="faq-section">
+            <h2 style="color:#e2b007; font-size:1.15rem; margin-bottom:10px; text-align:center;">Мифы о бананах</h2>
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(0)">Бананы сильно калорийны и способствуют набору веса</button>
+                <div class="faq-answer">В 1 банане всего около 100-120 ккал. При умеренном употреблении бананы не способствуют набору веса, а наоборот, могут быть частью здорового питания.</div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(1)">Бананы нельзя есть при диабете</button>
+                <div class="faq-answer">Бананы можно есть при диабете в умеренных количествах, учитывая общий рацион. Они содержат клетчатку и витамины.</div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(2)">Бананы — это фрукт</button>
+                <div class="faq-answer">С ботанической точки зрения банан — это ягода!</div>
+            </div>
+        </div>
+        <button id="fact-btn" onclick="showFact()">Показать интересный факт о бананах</button>
+        <div id="counter" style="margin-top:8px; color:#bfa100; text-align:center; font-size:0.98rem;"></div>
         <div id="fact"></div>
     </div>
     <script>
@@ -70,11 +226,68 @@
             "Бананы содержат триптофан, который способствует выработке серотонина — гормона счастья.",
             "Бананы — это ягоды с ботанической точки зрения!",
             "В бананах практически нет жира и холестерина.",
-            "Бананы могут помочь при судорогах благодаря высокому содержанию калия."
+            "Бананы могут помочь при судорогах благодаря высокому содержанию калия.",
+            "Бананы — один из немногих фруктов, которые легко усваиваются даже при проблемах с желудком.",
+            "В мире существует более 1000 сортов бананов!",
+            "Бананы могут помочь снизить артериальное давление.",
+            "Бананы — отличный источник энергии для спортсменов.",
+            "Банановое дерево на самом деле не дерево, а самая большая трава в мире.",
+            "Бананы плавают в воде, как и яблоки и арбузы.",
+            "В некоторых странах бананы используют для приготовления муки и чипсов.",
+            "Бананы могут способствовать улучшению памяти благодаря витаминам группы B.",
+            "Бананы помогают уменьшить изжогу благодаря натуральным антацидам.",
+            "В бананах содержится больше витамина B6, чем в большинстве других фруктов.",
+            "Бананы впервые были выращены человеком более 7 тысяч лет назад.",
+            "В Африке бананы часто используют для приготовления пива.",
+            "Бананы могут ускорять заживление язв желудка.",
+            "В Японии популярен банановый завтрак для похудения.",
+            "Бананы не растут на пальмах — это миф!",
+            "Бананы могут помочь при депрессии благодаря содержанию витаминов и минералов.",
+            "В некоторых странах банановую кожуру используют для чистки серебра.",
+            "Бананы — один из немногих фруктов, которые можно есть даже при гастрите.",
+            "В Эквадоре бананы — один из главных экспортных продуктов страны.",
+            "Бананы могут уменьшать мышечную усталость после тренировок."
         ];
+        let firstClick = true;
+        let factCount = 0;
         function showFact() {
+            const factDiv = document.getElementById('fact');
+            const btn = document.getElementById('fact-btn');
+            const counter = document.getElementById('counter');
             const fact = facts[Math.floor(Math.random() * facts.length)];
-            document.getElementById('fact').textContent = fact;
+            factDiv.classList.remove('visible');
+            void factDiv.offsetWidth;
+            factDiv.textContent = fact;
+            factDiv.classList.add('visible');
+            if (firstClick) {
+                btn.textContent = 'Показать ещё';
+                firstClick = false;
+            }
+            factCount++;
+            counter.textContent = `Показано фактов: ${factCount}`;
+            setTimeout(() => {
+                factDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 100);
+        }
+        function toggleFaq(idx) {
+            const items = document.querySelectorAll('.faq-item');
+            items.forEach((item, i) => {
+                if (i === idx) {
+                    item.classList.toggle('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+        }
+        function toggleTheme() {
+            const body = document.body;
+            const btn = document.querySelector('.theme-toggle');
+            body.classList.toggle('dark');
+            if (body.classList.contains('dark')) {
+                btn.textContent = '☀️ Светлая тема';
+            } else {
+                btn.textContent = '🌙 Тёмная тема';
+            }
         }
     </script>
 </body>
